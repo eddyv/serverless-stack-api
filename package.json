@@ -19,6 +19,7 @@
     "serverless-offline": "^5.3.3"
   },
   "dependencies": {
-    "uuid": "^3.3.3"
+    "uuid": "^3.3.3",
+    "serialize-javascript": ">=2.1.1"
   }
 }
