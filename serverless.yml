@@ -17,6 +17,7 @@ provider:
   region: us-east-2
   environment:
     tableName: ${env:TABLE_NAME}
+    stripeSecretKey: ${env:STRIPE_SECRET_KEY}
 
   # 'iamRoleStatemments' defines the permission policy for the Lambda function
   # In this case the Lambda functions are granted with permissions to access DynamoDB
@@ -31,6 +32,10 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:us-east-2:204494108705:table/notes"
+
+# Create our resources with seperate cloud formation templates.
+resources:
+  - ${file(resources/api-gateway-errors.yml)}
 
 functions:
   # Defines an HTTP API endpoint that calls the main function in create.js
@@ -77,5 +82,21 @@ functions:
       - http:
           path: notes/{id}
           method: put
+          cors: true
+          authorizer: aws_iam
+  delete:
+    handler: delete.main
+    events:
+      - http:
+          path: notes/{id}
+          method: delete
+          cors: true
+          authorizer: aws_iam
+  billing:
+    handler: billing.main
+    events:
+      - http:
+          path: billing
+          method: post
           cors: true
           authorizer: aws_iam
